@@ -6,13 +6,19 @@ app.secret_key = 'your_secret_key'  # Required for session to work
 
 @app.route("/", methods=["GET", "POST"])
 def home():
-    # Reset invalidcounter after successful navigation to 'about'
+    # Initialize invalidcounter if it doesn't exist
     if "invalidcounter" not in session:
         session["invalidcounter"] = 0
 
     if request.method == "POST":
-        response = request.form.get("response", "").lower()
+        # Get the user input and trim it to remove any leading/trailing spaces
+        response = request.form.get("response", "").strip().lower()
 
+        # Debugging print to show the raw input and processed input
+        print(f"Raw user input: '{request.form.get('response', '')}'")
+        print(f"Processed user input: '{response}'")  # Prints processed value
+
+        # Check the input and redirect based on the response
         if response == "nothing":
             return redirect(url_for("endloop"))
         elif response == "something":
@@ -20,15 +26,22 @@ def home():
         elif response == "everything":
             return redirect(url_for("everythingloop"))
         elif response == "about":
-            return render_template("about.html")
+            # Return the About info directly as HTML
+            return """
+            <h1>About Timothy AI</h1>
+            <p><strong>Timothy AI</strong> is an open source free AI service 
+            created by developer Grady Smith.</p>
+            <a href="/">Back to Home</a>
+            """
         else:
-            # Increment invalid counter and check if it exceeds limit
+            # Increment invalid counter and check if it exceeds the limit
             session["invalidcounter"] += 1
             if session["invalidcounter"] >= 5:
                 return redirect(url_for("endloop"))
-            return render_template("index.html", message="Invalid input. Please enter 'nothing', 'something', 'everything', or 'about'.")
+            return render_template("index.html", message="Invalid input. Please enter one of the following: 'nothing', 'something', 'everything', or 'about'.")
 
     return render_template("index.html")
+
 
 @app.route("/endloop")
 def endloop():
