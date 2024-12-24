@@ -4,9 +4,12 @@ from flask import Flask, render_template, request, redirect, url_for, session
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'  # Required for session to work
 
-# Global variables for state management (using session instead)
 @app.route("/", methods=["GET", "POST"])
 def home():
+    # Reset invalidcounter after successful navigation to 'about'
+    if "invalidcounter" not in session:
+        session["invalidcounter"] = 0
+
     if request.method == "POST":
         response = request.form.get("response", "").lower()
 
@@ -16,22 +19,28 @@ def home():
             return redirect(url_for("somethingloop"))
         elif response == "everything":
             return redirect(url_for("everythingloop"))
+        elif response == "about":
+            return render_template("about.html")
         else:
-            invalidcounter = session.get("invalidcounter", 0) + 1
-            session["invalidcounter"] = invalidcounter
-            if invalidcounter >= 5:
+            # Increment invalid counter and check if it exceeds limit
+            session["invalidcounter"] += 1
+            if session["invalidcounter"] >= 5:
                 return redirect(url_for("endloop"))
-            return render_template("Timothy_AI.html", message="Invalid input. Please enter 'nothing', 'something', or 'everything'.")
-    return render_template("Timothy_AI.html")
+            return render_template("index.html", message="Invalid input. Please enter 'nothing', 'something', 'everything', or 'about'.")
+
+    return render_template("index.html")
 
 @app.route("/endloop")
 def endloop():
+    # Reset session counters
+    session.pop("invalidcounter", None)
+    session.pop("looprun", None)
     return "<h1>Goodbye! Why are you so rude!</h1>"
 
 @app.route("/somethingloop")
 def somethingloop():
-    html_content = '<a href="https://www.esv.org/Genesis+1/">Click here to learn something.</a>'
-    return f"<h1>Here is something about something:</h1><p>{html_content}</p>"
+    # Use templates for better HTML management and flexibility
+    return render_template("somethingloop.html")
 
 @app.route("/everythingloop")
 def everythingloop():
@@ -39,11 +48,7 @@ def everythingloop():
     if looprun < 500:
         looprun += 5
         session["looprun"] = looprun
-        return f"""
-        <h1>Everything</h1>
-        <p>Wassup<br>everything<br>everything<br>everything<br>everything</p>
-        <a href="{url_for('everythingloop')}">Continue Everything</a>
-        """
+        return render_template("everythingloop.html", looprun=looprun)
     
     session["looprun"] = 0  # Reset the loop for the next session
     return redirect(url_for("home"))
