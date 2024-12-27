@@ -26,13 +26,8 @@ def home():
         elif response == "everything":
             return redirect(url_for("everythingloop"))
         elif response == "about":
-            # Return the About info directly as HTML
-            return """
-            <h1>About Timothy AI</h1>
-            <p><strong>Timothy AI</strong> is an open source free AI service 
-            created by developer Grady Smith.</p>
-            <a href="/">Back to Home</a>
-            """
+            # Render the about.html template
+            return redirect(url_for("about"))
         else:
             # Increment invalid counter and check if it exceeds the limit
             session["invalidcounter"] += 1
@@ -42,6 +37,9 @@ def home():
 
     return render_template("index.html")
 
+@app.route("/about")
+def about():
+    return render_template("about.html")
 
 @app.route("/endloop")
 def endloop():
