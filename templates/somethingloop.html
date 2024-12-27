@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Timothy AI</title>
+    <title>Something Loop</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -13,22 +13,14 @@
             margin: 0 auto;
             padding: 20px;
         }
-        .message {
-            color: red;
-        }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>Welcome to Timothy AI</h1>
-        <form method="POST">
-            <label for="response">Enter your response:</label>
-            <input type="text" id="response" name="response">
-            <button type="submit">Submit</button>
-        </form>
-        {% if message %}
-            <p class="message">{{ message }}</p>
-        {% endif %}
+        <h1>Something Loop</h1>
+        <p>Here is something to think about: <a href="https://www.esv.org/Genesis+1/">Something</a></p>
+        <a href="javascript:history.back()">&#8592; Back</a>
+        <br>
         <a href="{{ url_for('about') }}">About Timothy AI</a>
     </div>
 </body>

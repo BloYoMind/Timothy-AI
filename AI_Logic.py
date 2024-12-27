@@ -1,3 +1,4 @@
+
 import sys
 from flask import Flask, render_template, request, redirect, url_for, session
 
@@ -26,10 +27,8 @@ def home():
         elif response == "everything":
             return redirect(url_for("everythingloop"))
         elif response == "about":
-            # Render the about.html template
             return redirect(url_for("about"))
         else:
-            # Increment invalid counter and check if it exceeds the limit
             session["invalidcounter"] += 1
             if session["invalidcounter"] >= 5:
                 return redirect(url_for("endloop"))
@@ -46,11 +45,10 @@ def endloop():
     # Reset session counters
     session.pop("invalidcounter", None)
     session.pop("looprun", None)
-    return "<h1>Goodbye! Why are you so rude!</h1>"
+    return render_template("endloop.html")
 
 @app.route("/somethingloop")
 def somethingloop():
-    # Use templates for better HTML management and flexibility
     return render_template("somethingloop.html")
 
 @app.route("/everythingloop")
